@@ -39,23 +39,25 @@ func (u *User) AfterDelete() error {
 
 // Make you own custom middlewares
 func CORSMiddleware() http.MiddlewareFunc {
-	return func(ctx http.Context) {
-		ctx.SetHeader("Access-Control-Allow-Origin", "*")
-		ctx.SetHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		ctx.SetHeader("Access-Control-Allow-Headers", "Authorization, Content-Type")
+	return func(next http.HandlerFunc) http.HandlerFunc {
+		return func(ctx http.Context) {
+			ctx.SetHeader("Access-Control-Allow-Origin", "*")
+			ctx.SetHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			ctx.SetHeader("Access-Control-Allow-Headers", "Authorization, Content-Type")
 
-		if ctx.Method() == "OPTIONS" {
-			ctx.SetStatus(204)
-			ctx.Abort()
-			return
+			if ctx.Method() == "OPTIONS" {
+				ctx.SetStatus(204)
+				ctx.Abort()
+				return
+			}
+			ctx.Next()
 		}
-		ctx.Next()
 	}
 }
 
 func main() {
 	// Configure Postgres DSN
-	dsn := "host=localhost user=user password=password dbname=mydb port=5432 sslmode=disable"
+	dsn := "host=localhost user=username password=password dbname=mydb port=5432 sslmode=disable"
 
 	// Initialize Postgres DB adapter
 	dbAdapter := postgres.New(dsn)

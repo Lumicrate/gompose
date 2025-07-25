@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Lumicrate/gompose/db"
+	"github.com/Lumicrate/gompose/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -158,7 +159,7 @@ func (m *MongoAdapter) collectionFor(entity any) *mongo.Collection {
 	if t.Kind() == reflect.Ptr {
 		t = t.Elem()
 	}
-	return m.database.Collection(strings.ToLower(t.Name() + "s")) //simple plural name for collections
+	return m.database.Collection(strings.ToLower(utils.Pluralize(t.Name())))
 }
 
 func getEntityID(entity any) (string, error) {

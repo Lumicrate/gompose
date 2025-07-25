@@ -17,4 +17,7 @@ type Context interface {
 
 	Abort()
 	Next()
+
+	Set(key string, value any)
+	Get(key string) any
 }

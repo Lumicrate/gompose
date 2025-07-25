@@ -50,10 +50,8 @@ func (p *PostgresAdapter) FindAll(entity any, filters map[string]any, pagination
 		entityType = entityType.Elem()
 	}
 
-	// Create a slice type of the entity
 	sliceType := reflect.SliceOf(entityType)
 
-	// Create a new slice value (pointer to slice)
 	resultValue := reflect.New(sliceType) // *([]Entity)
 
 	tx := p.db.Model(entity)
@@ -78,7 +76,6 @@ func (p *PostgresAdapter) FindAll(entity any, filters map[string]any, pagination
 		return nil, err
 	}
 
-	// Dereference the pointer to get the slice value
 	result := resultValue.Elem().Interface()
 
 	return result, nil

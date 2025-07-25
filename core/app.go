@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/Lumicrate/gompose/auth"
 	"github.com/Lumicrate/gompose/crud"
 	"github.com/Lumicrate/gompose/db"
 	"github.com/Lumicrate/gompose/http"
@@ -8,26 +9,39 @@ import (
 )
 
 type App struct {
-	entities    []any
-	dbAdapter   db.DBAdapter
-	httpEngine  http.HTTPEngine
-	middlewares []http.MiddlewareFunc
+	entities     []registeredEntity
+	dbAdapter    db.DBAdapter
+	httpEngine   http.HTTPEngine
+	middlewares  []http.MiddlewareFunc
+	authProvider auth.AuthProvider
 }
 
-// NewApp creates a new app instance
+type registeredEntity struct {
+	entity any
+	config *crud.Config
+}
+
 func NewApp() *App {
 	return &App{
-		entities:    []any{},
+		entities:    []registeredEntity{},
 		middlewares: []http.MiddlewareFunc{},
 	}
 }
 
 func (a *App) Entities() []any {
-	return a.entities
+	raw := make([]any, len(a.entities))
+	for i, e := range a.entities {
+		raw[i] = e.entity
+	}
+	return raw
 }
 
-func (a *App) AddEntity(entity any) *App {
-	a.entities = append(a.entities, entity)
+func (a *App) AddEntity(entity any, opts ...crud.Option) *App {
+	cfg := crud.DefaultConfig()
+	for _, opt := range opts {
+		opt(cfg)
+	}
+	a.entities = append(a.entities, registeredEntity{entity: entity, config: cfg})
 	return a
 }
 
@@ -46,13 +60,26 @@ func (a *App) RegisterMiddleware(m http.MiddlewareFunc) *App {
 	return a
 }
 
+func (a *App) UseAuth(provider auth.AuthProvider) *App {
+	a.authProvider = provider
+	return a
+}
+
 func (a *App) Run() {
 	if err := a.dbAdapter.Init(); err != nil {
 		log.Fatalf("DB Init failed: %v", err)
 	}
 
-	if err := a.dbAdapter.Migrate(a.entities); err != nil {
+	if err := a.dbAdapter.Migrate(a.Entities()); err != nil {
 		log.Fatalf("DB Migration failed: %v", err)
+	}
+
+	if a.authProvider != nil {
+		err := a.authProvider.Init()
+		if err != nil {
+			return
+		}
+		a.authProvider.RegisterRoutes(a.httpEngine)
 	}
 
 	for _, m := range a.middlewares {
@@ -60,7 +87,7 @@ func (a *App) Run() {
 	}
 
 	for _, e := range a.entities {
-		crud.RegisterCRUDRoutes(a.httpEngine, a.dbAdapter, e)
+		crud.RegisterCRUDRoutes(a.httpEngine, a.dbAdapter, e.entity, e.config, a.authProvider)
 	}
 
 	if err := a.httpEngine.Start(); err != nil {

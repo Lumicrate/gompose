@@ -45,7 +45,8 @@ func (g *GinEngine) RegisterRoute(method string, path string, handler http.Handl
 
 func (g *GinEngine) Use(middleware http.MiddlewareFunc) {
 	g.engine.Use(func(c *gin.Context) {
-		middleware(&GinContext{ctx: c})
+		final := middleware(func(ctx http.Context) {})
+		final(&GinContext{ctx: c})
 	})
 }
 

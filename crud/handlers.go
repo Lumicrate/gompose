@@ -55,7 +55,6 @@ func handleGetAll(ctx http.Context, dbAdapter db.DBAdapter, entity any) {
 func handleGetByID(ctx http.Context, dbAdapter db.DBAdapter, entity any) {
 	id := ctx.Param("id")
 
-	// create new entity instance to receive result
 	t := reflect.TypeOf(entity)
 	if t.Kind() == reflect.Ptr {
 		t = t.Elem()
@@ -156,14 +155,12 @@ func handlePatch(ctx http.Context, dbAdapter db.DBAdapter, entity any) {
 		return
 	}
 
-	// Read patch data as a map
 	patchData := map[string]interface{}{}
 	if err := ctx.BindJSON(&patchData); err != nil {
 		ctx.JSON(400, map[string]string{"error": "invalid patch data"})
 		return
 	}
 
-	// Merge patchData into found entity
 	patchBytes, _ := json.Marshal(patchData)
 	if err := json.Unmarshal(patchBytes, &found); err != nil {
 		ctx.JSON(500, map[string]string{"error": err.Error()})

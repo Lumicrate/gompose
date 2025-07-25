@@ -10,18 +10,22 @@ var visitors = make(map[string]time.Time)
 var mu sync.Mutex
 
 func RateLimitMiddleware(limit time.Duration) http.MiddlewareFunc {
-	return func(ctx http.Context) {
-		ip := ctx.RemoteIP()
-		mu.Lock()
-		lastRequest, exists := visitors[ip]
-		if exists && time.Since(lastRequest) < limit {
+	return func(next http.HandlerFunc) http.HandlerFunc {
+		return func(ctx http.Context) {
+			ip := ctx.RemoteIP()
+			mu.Lock()
+			lastRequest, exists := visitors[ip]
+			if exists && time.Since(lastRequest) < limit {
+				mu.Unlock()
+				ctx.JSON(429, map[string]string{"error": "rate limit exceeded"})
+				ctx.Abort()
+				return
+			}
+			visitors[ip] = time.Now()
 			mu.Unlock()
-			ctx.JSON(429, map[string]string{"error": "rate limit exceeded"})
-			ctx.Abort()
-			return
+			ctx.Next()
+
+			next(ctx)
 		}
-		visitors[ip] = time.Now()
-		mu.Unlock()
-		ctx.Next()
 	}
 }

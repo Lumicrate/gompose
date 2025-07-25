@@ -3,7 +3,8 @@ package ginadapter
 import "github.com/gin-gonic/gin"
 
 type GinContext struct {
-	ctx *gin.Context
+	ctx    *gin.Context
+	values map[string]any
 }
 
 func (g *GinContext) JSON(code int, obj any) {
@@ -55,4 +56,18 @@ func (g *GinContext) Next() {
 
 func (g *GinContext) Header(header string) string {
 	return g.ctx.GetHeader(header)
+}
+
+func (g *GinContext) Set(key string, value any) {
+	if g.values == nil {
+		g.values = make(map[string]any)
+	}
+	g.values[key] = value
+}
+
+func (g *GinContext) Get(key string) any {
+	if g.values == nil {
+		return nil
+	}
+	return g.values[key]
 }
