@@ -43,8 +43,8 @@ func (j *JWTAuthProvider) Init() error {
 }
 
 func (j *JWTAuthProvider) RegisterRoutes(engine http.HTTPEngine) {
-	engine.RegisterRoute("POST", "/auth/register", j.registerHandler)
-	engine.RegisterRoute("POST", "/auth/login", j.loginHandler)
+	engine.RegisterRoute("POST", "/auth/register", j.registerHandler, j.UserModel, false)
+	engine.RegisterRoute("POST", "/auth/login", j.loginHandler, j.UserModel, false)
 }
 
 func (j *JWTAuthProvider) SetUserModel(model any) *JWTAuthProvider {

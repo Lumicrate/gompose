@@ -52,6 +52,7 @@ func main() {
 		AddEntity(Office{}, crud.Protect("POST", "PUT", "DELETE")).
 		UseDB(dbAdapter).
 		UseHTTP(httpEngine).
-		UseAuth(authProvider)
+		UseAuth(authProvider).
+		UseSwagger()
 	app.Run()
 }

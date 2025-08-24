@@ -4,16 +4,18 @@ import (
 	"github.com/Lumicrate/gompose/auth"
 	"github.com/Lumicrate/gompose/crud"
 	"github.com/Lumicrate/gompose/db"
+	"github.com/Lumicrate/gompose/docs/swagger"
 	"github.com/Lumicrate/gompose/http"
 	"log"
 )
 
 type App struct {
-	entities     []registeredEntity
-	dbAdapter    db.DBAdapter
-	httpEngine   http.HTTPEngine
-	middlewares  []http.MiddlewareFunc
-	authProvider auth.AuthProvider
+	entities        []registeredEntity
+	dbAdapter       db.DBAdapter
+	httpEngine      http.HTTPEngine
+	middlewares     []http.MiddlewareFunc
+	authProvider    auth.AuthProvider
+	swaggerProvider *swagger.SwaggerProvider
 }
 
 type registeredEntity struct {
@@ -65,6 +67,11 @@ func (a *App) UseAuth(provider auth.AuthProvider) *App {
 	return a
 }
 
+func (a *App) UseSwagger() *App {
+	a.swaggerProvider = swagger.NewSwaggerProvider()
+	return a
+}
+
 func (a *App) Run() {
 	if err := a.dbAdapter.Init(); err != nil {
 		log.Fatalf("DB Init failed: %v", err)
@@ -88,6 +95,10 @@ func (a *App) Run() {
 
 	for _, e := range a.entities {
 		crud.RegisterCRUDRoutes(a.httpEngine, a.dbAdapter, e.entity, e.config, a.authProvider)
+	}
+
+	if a.swaggerProvider != nil {
+		a.swaggerProvider.RegisterRoutes(a.httpEngine)
 	}
 
 	if err := a.httpEngine.Start(); err != nil {

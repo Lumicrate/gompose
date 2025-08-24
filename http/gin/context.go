@@ -71,3 +71,8 @@ func (g *GinContext) Get(key string) any {
 	}
 	return g.values[key]
 }
+
+func (g *GinContext) Body(content string) {
+	g.ctx.Writer.WriteHeaderNow()
+	g.ctx.Writer.Write([]byte(content))
+}

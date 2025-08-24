@@ -9,12 +9,14 @@ import (
 type GinEngine struct {
 	engine *gin.Engine
 	port   int
+	routes []http.Route
 }
 
 func New(port int) *GinEngine {
 	return &GinEngine{
 		engine: gin.Default(),
 		port:   port,
+		routes: []http.Route{},
 	}
 }
 
@@ -22,7 +24,15 @@ func (g *GinEngine) Init(_ int) error {
 	return nil
 }
 
-func (g *GinEngine) RegisterRoute(method string, path string, handler http.HandlerFunc) {
+func (g *GinEngine) RegisterRoute(method string, path string, handler http.HandlerFunc, entity any, isProtected bool) {
+
+	g.routes = append(g.routes, http.Route{
+		Method:    method,
+		Path:      path,
+		Entity:    entity,
+		Protected: isProtected,
+	})
+
 	ginHandler := func(c *gin.Context) {
 		handler(&GinContext{ctx: c})
 	}
@@ -60,4 +70,8 @@ func (g *GinContext) BindJSON(obj any) error {
 
 func (g *GinEngine) Start() error {
 	return g.engine.Run(fmt.Sprintf(":%d", g.port))
+}
+
+func (g *GinEngine) Routes() []http.Route {
+	return g.routes
 }

@@ -28,7 +28,7 @@ func RegisterCRUDRoutes(
 		if config.ProtectedMethods[method] && authProvider != nil {
 			wrapped = authProvider.Middleware()(handler)
 		}
-		engine.RegisterRoute(method, path, wrapped)
+		engine.RegisterRoute(method, path, wrapped, entity, config.ProtectedMethods[method])
 	}
 
 	// GET /entities (list)

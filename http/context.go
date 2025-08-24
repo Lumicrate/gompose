@@ -14,6 +14,7 @@ type Context interface {
 	Status() int
 	RemoteIP() string
 	Header(header string) string
+	Body(string)
 
 	Abort()
 	Next()

@@ -239,6 +239,42 @@ Supported via query parameters on endpoints:
 
 ---
 
+## Swagger (API Documentation)
+
+**Gompose** now provides automatic OpenAPI 3.0 documentation and an interactive Swagger UI.
+
+### Accessing Swagger
+
+Once your app is running, the following endpoints are available:
+
+- **Raw OpenAPI JSON**: [`GET /swagger.json`]
+  Provides the full OpenAPI specification for your API.
+
+- **Swagger UI**: [`GET /swagger-ui`]
+  Interactive API documentation with the ability to try endpoints directly from the browser.
+
+### Features
+
+- Auto-generates request and response schemas from your Go entities.
+- Converts `:id` path parameters to `{id}` automatically.
+- Shows all registered HTTP methods for each route.
+- Displays protected routes and allows JWT authentication via the “Authorize” button.
+
+### Example Usage
+
+```go
+app := core.NewApp().
+    AddEntity(User{}, crud.Protect("POST", "PUT", "DELETE")).
+    UseDB(dbAdapter).
+    UseHTTP(httpEngine).
+    UseAuth(authProvider).
+    UseSwagger() // Enable Swagger endpoints
+
+app.Run()
+```
+
+---
+
 ## Contribution
 
 Contributions are welcome! Please submit issues and pull requests.
