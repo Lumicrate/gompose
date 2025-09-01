@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.2.1] - 2025-09-01
+### Added
+- Support for **query parameters** in GET routes:
+  - `limit` and `offset` for pagination
+  - `sort` for sorting (e.g., `sort=name,-created_at`)
+  - Entity fields as **filters** (e.g., `?name=john`)
+
+### Changed
+- Refactored `SwaggerProvider.Generate` for clarity and extensibility
+- Added detailed inline comments in Swagger generator code
+
+### Fixed
+- Missing documentation for query-based filters in GET endpoints
+
 ## [1.2.0] - 2025-08-24
 ### Added
 - **Swagger Integration**:

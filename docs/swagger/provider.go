@@ -96,6 +96,48 @@ func (s *SwaggerProvider) Generate(engine http.HTTPEngine) *openapi3.T {
 			}
 		}
 
+		if r.Method == "GET" && !strings.Contains(path, "{id}") {
+			// Add pagination query params
+			operation.Parameters = append(operation.Parameters,
+				&openapi3.ParameterRef{Value: &openapi3.Parameter{
+					Name:        "limit",
+					In:          "query",
+					Description: "Maximum number of results to return",
+					Required:    false,
+					Schema:      &openapi3.SchemaRef{Value: &openapi3.Schema{Type: &openapi3.Types{"integer"}}},
+				}},
+				&openapi3.ParameterRef{Value: &openapi3.Parameter{
+					Name:        "offset",
+					In:          "query",
+					Description: "Number of results to skip before starting",
+					Required:    false,
+					Schema:      &openapi3.SchemaRef{Value: &openapi3.Schema{Type: &openapi3.Types{"integer"}}},
+				}},
+				&openapi3.ParameterRef{Value: &openapi3.Parameter{
+					Name:        "sort",
+					In:          "query",
+					Description: "Comma-separated fields for sorting (prefix with - for descending)",
+					Required:    false,
+					Schema:      &openapi3.SchemaRef{Value: &openapi3.Schema{Type: &openapi3.Types{"string"}}},
+				}},
+			)
+
+			// Add filter params based on entity fields (if available)
+			if schemaRef != nil && schemaRef.Value != nil {
+				for fieldName, fieldSchema := range schemaRef.Value.Properties {
+					operation.Parameters = append(operation.Parameters,
+						&openapi3.ParameterRef{Value: &openapi3.Parameter{
+							Name:        fieldName,
+							In:          "query",
+							Description: "Filter by " + fieldName,
+							Required:    false,
+							Schema:      fieldSchema,
+						}},
+					)
+				}
+			}
+		}
+
 		// Attach operation to correct HTTP method
 		switch r.Method {
 		case "GET":

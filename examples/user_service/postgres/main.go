@@ -55,7 +55,7 @@ func CORSMiddleware() http.MiddlewareFunc {
 
 func main() {
 	// Configure Postgres DSN
-	dsn := "host=localhost user=username password=password dbname=my_db port=5432 sslmode=disable"
+	dsn := "host=localhost user=postgres password=password dbname=mydb port=5432 sslmode=disable"
 
 	// Initialize Postgres DB adapter
 	dbAdapter := postgres.New(dsn)
@@ -69,9 +69,6 @@ func main() {
 		AddEntity(Office{}).
 		UseDB(dbAdapter).
 		UseHTTP(httpEngine).
-		//RegisterMiddleware(middlewares.LoggingMiddleware()).
-		//RegisterMiddleware(middlewares.RateLimitMiddleware(1 * time.Second)).
-		//RegisterMiddleware(CORSMiddleware()).
 		UseSwagger()
 
 	// Run the app
