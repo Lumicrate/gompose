@@ -1,5 +1,9 @@
 package http
 
+import (
+	"net/http"
+)
+
 type Context interface {
 	JSON(code int, obj any)
 	Bind(obj any) error
@@ -21,4 +25,6 @@ type Context interface {
 
 	Set(key string, value any)
 	Get(key string) any
+
+	Request() *http.Request
 }

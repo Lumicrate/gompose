@@ -1,12 +1,14 @@
 package core
 
 import (
+	"log"
+
 	"github.com/Lumicrate/gompose/auth"
 	"github.com/Lumicrate/gompose/crud"
 	"github.com/Lumicrate/gompose/db"
 	"github.com/Lumicrate/gompose/docs/swagger"
 	"github.com/Lumicrate/gompose/http"
-	"log"
+	"github.com/Lumicrate/gompose/i18n"
 )
 
 type App struct {
@@ -16,6 +18,7 @@ type App struct {
 	middlewares     []http.MiddlewareFunc
 	authProvider    auth.AuthProvider
 	swaggerProvider *swagger.SwaggerProvider
+	localization    *i18n.Translator
 }
 
 type registeredEntity struct {
@@ -64,6 +67,18 @@ func (a *App) RegisterMiddleware(m http.MiddlewareFunc) *App {
 
 func (a *App) UseAuth(provider auth.AuthProvider) *App {
 	a.authProvider = provider
+	return a
+}
+
+func (a *App) UseI18n(localization *i18n.Translator) *App {
+	a.localization = localization
+
+	return a
+}
+
+func (a *App) SetLocale(locale string) *App {
+	a.localization = a.localization.SetLocale(locale)
+
 	return a
 }
 
