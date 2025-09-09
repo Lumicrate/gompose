@@ -19,7 +19,7 @@ const (
 	CtxLocalizer = "x-localizer"
 )
 
-type LanguageExtractorOptions map[string]interface{}
+type LanguageExtractorOptions map[string]any
 type LanguageExtractor func(http.Context, LanguageExtractorOptions) []string
 
 type Translator struct {
@@ -77,7 +77,7 @@ func listFiles(directory string) ([]string, error) {
 
 	var files []string
 	for _, entry := range entries {
-		if !entry.IsDir() && strings.HasSuffix(entry.Name(), "yaml") {
+		if !entry.IsDir() && strings.HasSuffix(entry.Name(), "yaml") || strings.HasSuffix(entry.Name(), "yml") {
 			files = append(files, entry.Name())
 		}
 	}

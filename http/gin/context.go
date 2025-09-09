@@ -1,6 +1,10 @@
 package ginadapter
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
 
 type GinContext struct {
 	ctx    *gin.Context
@@ -75,4 +79,8 @@ func (g *GinContext) Get(key string) any {
 func (g *GinContext) Body(content string) {
 	g.ctx.Writer.WriteHeaderNow()
 	g.ctx.Writer.Write([]byte(content))
+}
+
+func (g *GinContext) Request() *http.Request {
+	return g.ctx.Request
 }

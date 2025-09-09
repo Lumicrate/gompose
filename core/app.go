@@ -70,8 +70,12 @@ func (a *App) UseAuth(provider auth.AuthProvider) *App {
 	return a
 }
 
-func (a *App) UseI18n(localization *i18n.Translator) *App {
-	a.localization = localization
+func (a *App) UseI18n(directory, defaultLocale string) *App {
+	var err error
+
+	if a.localization, err = i18n.NewI18n(directory, defaultLocale); err != nil {
+		log.Fatalf("i18n Init failed: %v", err)
+	}
 
 	return a
 }
@@ -82,18 +86,24 @@ func (a *App) SetLocale(locale string) *App {
 	return a
 }
 
+func (a *App) T(messageID string, args ...any) string {
+	return a.localization.T(messageID, args...)
+}
+
 func (a *App) UseSwagger() *App {
 	a.swaggerProvider = swagger.NewSwaggerProvider()
 	return a
 }
 
 func (a *App) Run() {
-	if err := a.dbAdapter.Init(); err != nil {
-		log.Fatalf("DB Init failed: %v", err)
-	}
+	if a.dbAdapter != nil {
+		if err := a.dbAdapter.Init(); err != nil {
+			log.Fatalf("DB Init failed: %v", err)
+		}
 
-	if err := a.dbAdapter.Migrate(a.Entities()); err != nil {
-		log.Fatalf("DB Migration failed: %v", err)
+		if err := a.dbAdapter.Migrate(a.Entities()); err != nil {
+			log.Fatalf("DB Migration failed: %v", err)
+		}
 	}
 
 	if a.authProvider != nil {
