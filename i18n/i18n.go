@@ -197,15 +197,24 @@ func (t *Translator) AddMessage(locale, id, message string) (err error) {
 func (t *Translator) T(messageID string, args ...any) string {
 	var (
 		data      map[string]any
-		localizer = go18n.NewLocalizer(t.bundle, t.locale)
+		lang      string
+		localizer *go18n.Localizer
 	)
 
 	for _, arg := range args {
 		switch v := arg.(type) {
 		case map[string]any:
 			data = v
+		case string:
+			lang = v
 		}
 	}
+
+	if lang == "" {
+		lang = t.locale
+	}
+
+	localizer = go18n.NewLocalizer(t.bundle, lang)
 
 	return localize(localizer, messageID, data)
 }
