@@ -9,29 +9,6 @@ All notable changes to this project will be documented in this file.
   - Support for multiple languages (e.g., `fa`, `en`) with a configurable default language.
   - Support for dynamic parameters in translation strings.
 
-**Usage Example**:
-
-fa.yaml
-```yaml
-- id: hello_world
-  translation: "سلام دنیا"
-
-- id: hello_name
-  translation: "سلام {{.Name}}"
-```
-
-```go
-httpEngine := ginAdapter.New(8080)
-
-app := core.NewApp().
-    UseHTTP(httpEngine).
-    UseI18n("./locales", "fa")
-
-fmt.Println(app.T("hello_world")) // Output: "سلام دنیا"
-fmt.Println(app.T("hello_name", map[string]any{"Name": "محمد"})) // Output: "سلام محمد"
-fmt.Println(app.T("hello_name", "en", map[string]any{"Name":"Mohammad"})) // Output: "Hello Mohammad"
-```
-
 ## [v1.2.1] - 2025-09-01
 ### Added
 - Support for **query parameters** in GET routes:

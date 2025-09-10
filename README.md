@@ -1,6 +1,6 @@
 # Gompose
 
-**Gompose** is a Go framework for quickly building RESTful APIs with support for multiple HTTP engines and databases (Postgres, MongoDB, etc). It provides features like CRUD handlers, entity hooks and middlewares.
+**Gompose** is a Go framework for quickly building RESTful APIs with support for multiple HTTP engines and databases (Postgres, MongoDB, etc). It provides features like CRUD handlers, entity hooks, middlewares, authentication, i18n, and automatic Swagger documentation.
 
 ---
 
@@ -15,6 +15,8 @@
 - Entity lifecycle hooks (beforeSave, afterDelete, etc)
 - Pagination, filtering, sorting support
 - Authentication and Authorization with login and register routes(JWT for now but more will be added in future)
+- Automatic Swagger/OpenAPI 3.0 documentation with interactive UI
+- Internationalization (i18n) and translations with YAML/JSON files
 
 ---
 
@@ -272,6 +274,76 @@ app := core.NewApp().
 
 app.Run()
 ```
+
+---
+## Internationalization (i18n)
+
+**Gompose** now supports **i18n / translations** out of the box, using **YAML/JSON** files stored in a `locales` directory.
+
+You can configure a **default language**, add custom language extractors (from headers, cookies, URL prefix), and dynamically translate strings with parameters.
+
+Example `fa.yml
+`
+```yaml
+- id: hello_world
+  translation: "سلام دنیا"
+
+- id: hello_name
+  translation: "سلام {{.Name}}"
+```
+
+Example `en.yml
+`
+
+```yaml
+- id: hello_world
+  translation: "Hello World"
+
+- id: hello_name
+  translation: "Hello {{.Name}}"
+```
+
+**Usage in App**
+
+```go
+httpEngine := ginadapter.New(8080)
+
+app := core.NewApp().
+    UseHTTP(httpEngine).
+    UseI18n("./locales", "fa") // Load translations, default to Farsi
+
+fmt.Println(app.T("hello_world")) 
+// Output: "سلام دنیا"
+
+fmt.Println(app.T("hello_name", map[string]any{"Name": "محمد"})) 
+// Output: "سلام محمد"
+
+fmt.Println(app.T("hello_name", "en", map[string]any{"Name":"Mohammad"})) 
+// Output: "Hello Mohammad"
+```
+
+**Changing Locale**
+```go
+app.SetLocale("en")
+
+fmt.Println(app.T("hello_world"))
+// Output: "Hello World"
+```
+
+**Middleware**
+
+The i18n module also provides a middleware that automatically detects language from:
+
+ - `Accept-Language` header
+
+ - Cookies
+
+ - URL prefix (configurable)
+
+```go 
+app.RegisterMiddleware(app.Localization.GetMiddleware())
+```
+
 
 ---
 
