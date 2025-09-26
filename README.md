@@ -281,7 +281,6 @@ app.Run()
 ## CLI (Command Line Tool)
 
 Starting from **v1.4.0**, Gompose ships with a CLI tool (`gompose`) to make scaffolding and setup even faster.
-
 ### Setup
  - For Windows: 
    ```bash
@@ -291,7 +290,6 @@ Starting from **v1.4.0**, Gompose ships with a CLI tool (`gompose`) to make scaf
    ```bash
    curl -sSL https://raw.githubusercontent.com/Lumicrate/gompose/main/install.sh | bash 
    ```
-
 ### Available Commands
 
 - `gompose config`  
