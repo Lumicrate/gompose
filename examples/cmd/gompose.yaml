@@ -1,0 +1,11 @@
+database:
+  driver: postgres
+  dsn: "host=localhost user=my_user password=my_password dbname=mydb port=5432 sslmode=disable"
+  name: mydb
+
+http:
+  engine: gin
+  port: 8080
+
+auth:
+  secret: "SecretKey"
