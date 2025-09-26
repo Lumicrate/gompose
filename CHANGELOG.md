@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.4.0] - 2025-09-11
+### Added
+- **CLI Support (via Cobra)**:  
+  Introduced a new `gompose` command-line tool to streamline project setup and scaffolding.
+  - `gompose config`: Generates a `gompose.yaml` config file (accepts parameters for DB driver, HTTP engine, auth secret, etc.; falls back to defaults if none provided).
+  - `gompose init`: Scaffolds a `main.go` file based on `gompose.yaml`.
+  - `gompose generate`: Generates entities and CRUD boilerplate code.
+- **Multi-database & HTTP engine support**:
+  - Added support for **Postgres** and **MongoDB** databases.
+  - Added support for **Gin** as the HTTP adapter.
+  - Configurable via `gompose.yaml`.
+
 ## [v1.3.0] - 2025-09-10
 ### Added
 - **i18n / Translator support**:

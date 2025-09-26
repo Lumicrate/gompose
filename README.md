@@ -276,6 +276,93 @@ app.Run()
 ```
 
 ---
+---
+
+## CLI (Command Line Tool)
+
+Starting from **v1.4.0**, Gompose ships with a CLI tool (`gompose`) to make scaffolding and setup even faster.
+
+### Available Commands
+
+- `gompose config`  
+  Generates a `gompose.yaml` configuration file.
+  - If no parameters are provided, a **default config** will be generated.
+  - Example:
+    ```yaml
+    database:
+      driver: postgres
+      dsn: "host=localhost user=user password=password dbname=mydb port=5432 sslmode=disable"
+    http:
+      engine: gin
+      port: 8080
+    auth:
+      secret: "SecretKEY"
+    ```
+   ### Parameters (Flags)
+
+  You can override defaults using flags:
+
+  | Flag        | Default Value | Description                                                                 |
+    |-------------|---------------|-----------------------------------------------------------------------------|
+  | `--db`      | `postgres`    | Database driver. Options: `postgres`, `mongodb`.                            |
+  | `--dsn`     | DSN string    | Database connection string (Postgres DSN or MongoDB URI).                   |
+  | `--dbname`  | `mydb`        | Database name. **Required for MongoDB**, ignored for Postgres.              |
+  | `--http`    | `gin`         | HTTP engine. Currently only `gin` is supported.                             |
+  | `--port`    | `8080`        | HTTP server port.                                                           |
+  | `--secret`  | `SecretKEY`   | Secret key for authentication (used by JWT provider).
+  ### Examples
+
+  **Generate default config:**
+  ```bash
+  gompose config
+  ```
+  Generate config with MongoDB + custom port:
+  ```bash
+  gompose config --db=mongodb --dsn="mongodb://localhost:27017" --dbname=myproject --port=9090
+  ```
+
+  Generate config with custom secret:
+  ```bash
+  gompose config --secret="SuperSecret123"
+  ```
+
+- `gompose init`  
+  Initializes a `main.go` file based on the settings in `gompose.yaml`.  
+  This scaffolds your app with database, HTTP engine, and authentication pre-wired.
+
+- `gompose generate`  
+  Generates CRUD boilerplate for your entities.
+  ### Syntax
+  ```bash
+  gompose generate [EntityName] --fields fieldName:type,otherField:type
+  ```
+   - `[EntityName]`: The name of the entity struct (**capitalized in Go**).
+
+    - `--fields`: A comma-separated list of fields with their types.
+   ### Example
+  ```bash 
+  gompose generate entity User --fields name:string,email:string
+  ```
+  This generates a file `user.go` in the `entities/` package:
+  ```go 
+  package entities
+  
+  type User struct {
+  ID    int    `json:"id" gorm:"primaryKey;autoIncrement"`
+  Name  string `json:"name"`
+  Email string `json:"email"`
+  }
+  ```
+
+This makes **development** faster — just run:
+```bash
+go get github.com/Lumicrate/gompose
+gompose config
+gompose init
+go mod tidy
+go run main.go
+```
+---
 ## Internationalization (i18n)
 
 **Gompose** now supports **i18n / translations** out of the box, using **YAML/JSON** files stored in a `locales` directory.
