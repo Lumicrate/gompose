@@ -282,6 +282,16 @@ app.Run()
 
 Starting from **v1.4.0**, Gompose ships with a CLI tool (`gompose`) to make scaffolding and setup even faster.
 
+### Setup
+ - For Windows: 
+   ```bash
+   go install github.com/Lumicrate/gompose@latest 
+   ```
+ - For Linux/macOS
+   ```bash
+   curl -sSL https://raw.githubusercontent.com/Lumicrate/gompose/main/install.sh | bash 
+   ```
+
 ### Available Commands
 
 - `gompose config`  
@@ -353,15 +363,6 @@ Starting from **v1.4.0**, Gompose ships with a CLI tool (`gompose`) to make scaf
   Email string `json:"email"`
   }
   ```
-
-This makes **development** faster — just run:
-```bash
-go get github.com/Lumicrate/gompose
-gompose config
-gompose init
-go mod tidy
-go run main.go
-```
 ---
 ## Internationalization (i18n)
 

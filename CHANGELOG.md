@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.4.1] - 2025-09-11
+### Added
+- **Install script (`install.sh`)**:
+  - Allows Linux/macOS users to install `gompose` globally with one command:
+    ```bash
+    curl -sSL https://raw.githubusercontent.com/Lumicrate/gompose/main/install.sh | bash
+    ```
+  - Handles installation into `~/.local/bin`.
+  - Detects if `~/.local/bin` is not in `PATH` and shows a helpful message.
+- Improved cross-platform setup instructions:
+  - Linux/macOS: use `install.sh`.
+  - Windows: `go install github.com/Lumicrate/gompose@latest` works out-of-the-box.
+
 ## [v1.4.0] - 2025-09-11
 ### Added
 - **CLI Support (via Cobra)**:  
