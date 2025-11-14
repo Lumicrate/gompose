@@ -2,6 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
+
 ## [v1.4.2] - 2025-11-14
 
 ### Added
