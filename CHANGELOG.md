@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+
+## [v1.4.2] - 2025-11-14
+
+### Added
+
+ - Comprehensive unit tests for all modules (`db`, `http`, `auth`, `i18n`, `utils`):
+
+   - Tests cover database adapters (`Postgres` + `SQLite` via `glebarez/sqlite`), `HTTP engine`, `JWT auth` and `CRUD` registration.
+
+   - Mock contexts and mock DB adapters used to ensure isolated testing.
+
+ - Improved code reliability by identifying edge cases in authentication, routing, and internationalization.
+
+### Changed
+
+ - Refactored test setup to use mock DB and HTTP contexts, improving test speed and isolation.
+
+ - Updated project structure to consolidate utility functions into a single `utils.go` file.
+
 ## [v1.4.1] - 2025-09-11
 ### Added
 - **Install script (`install.sh`)**:
